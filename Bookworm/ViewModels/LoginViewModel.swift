@@ -20,7 +20,7 @@ class LoginViewModel: ObservableObject {
 
     private let loginRepository: LoginRepository
 
-    init(loginRepository: LoginRepository = DummyLoginRepository()) {
+    init(loginRepository: LoginRepository = DefaultLoginRepository()) {
         self.loginRepository = loginRepository
     }
 
@@ -30,8 +30,10 @@ class LoginViewModel: ObservableObject {
 
         do {
             try await loginRepository.login(username: username, password: password)
+        } catch let error as APIError {
+            errorMessage = error.customDescription
         } catch {
-            errorMessage = "Login failed. Please try again."
+            errorMessage = "Unknown error occurred."
         }
 
         isLoading = false

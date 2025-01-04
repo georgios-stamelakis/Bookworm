@@ -1,16 +1,11 @@
 //
-//  LoginRepository.swift
+//  DummyLoginRepository.swift
 //  Bookworm
 //
 //  Created by Georgios Stamelakis on 4/1/25.
 //
 
 import Foundation
-
-protocol LoginRepository {
-    func login(username: String, password: String) async throws
-}
-
 
 class DummyLoginRepository: LoginRepository {
     func login(username: String, password: String) async throws {
