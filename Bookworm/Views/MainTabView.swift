@@ -20,25 +20,36 @@ struct MainTabView: View {
                     }
                     .tag(0)
 
-                Text("Second Tab")
-                    .tabItem {
-                        Label("Second", systemImage: "star.fill")
-                    }
-                    .tag(1)
+                NavigationStack {
+                    Text("Second Tab")
+                        .navigationTitle("Second Tab")
+                }
+                .tabItem {
+                    Label("Second", systemImage: "star.fill")
+                }
+                .tag(1)
 
                 Spacer()
 
-                Text("Third Tab")
-                    .tabItem {
-                        Label("Third", systemImage: "gear")
-                    }
-                    .tag(3)
+                NavigationStack {
+                    Text("Third Tab")
+                        .navigationTitle("Third Tab")
+                }
+                .tabItem {
+                    Label("Third", systemImage: "gear")
+                }
+                .tag(3)
 
-                Text("Fourth Tab")
-                    .tabItem {
-                        Label("Fourth", systemImage: "person.fill")
-                    }
-                    .tag(4)
+                NavigationStack {
+                    Text("Fourth Tab")
+                        .navigationTitle("Fourth Tab")
+
+                }
+                .tabItem {
+                    Label("Fourth", systemImage: "person.fill")
+                }
+                .tag(4)
+
             }
 
             VStack {
