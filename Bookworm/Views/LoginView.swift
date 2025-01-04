@@ -23,15 +23,25 @@ struct LoginView: View {
             if viewModel.isLoading {
                 ProgressView()
             } else {
-                Button("Login") {
-                    Task {
-                        await viewModel.login()
+                VStack {
+                    Button("Login") {
+                        Task {
+                            await viewModel.login()
+                        }
                     }
-                }
-                .disabled(viewModel.isLoginButtonDisabled)
-                .buttonStyle(.borderedProminent)
-            }
+                    .disabled(viewModel.isLoginButtonDisabled)
+                    .buttonStyle(.borderedProminent)
 
+                    Button("Books") {
+                        Task {
+                            await viewModel.getBooks()
+                        }
+                    }
+                    .disabled(viewModel.isLoginButtonDisabled)
+                    .buttonStyle(.borderedProminent)
+                }
+                .padding()
+            }
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)

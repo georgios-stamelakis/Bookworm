@@ -13,11 +13,20 @@ protocol LoginRepository {
 
 class DefaultLoginRepository: LoginRepository {
 
+    var tokenStorage: TokenStorageProtocol
+
+    init(tokenStorage: TokenStorageProtocol = KeychainTokenManager()) {
+        self.tokenStorage = tokenStorage
+    }
+
     func login(username: String, password: String) async throws {
 
         let loginRequest = LoginRequest(username: username, password: password)
         let loginClient = LoginClient()
 
         let loginResponse = try await loginClient.login(with: loginRequest)
+
+        let tokenData = TokenData(tokenType: loginResponse.tokenType, refreshToken: loginResponse.refreshToken, accessToken: loginResponse.accessToken)
+        try tokenStorage.saveTokenData(tokenData)
     }
 }

@@ -11,6 +11,8 @@ protocol Endpoint {
     var httpMethod: HTTPMethod { get }
     var path: String { get }
     var postData: [String: Any]? { get }
+
+    var needsAuthorization: Bool { get }
 }
 
 extension Endpoint {
@@ -62,6 +64,16 @@ extension Endpoint {
 
         request.httpMethod = httpMethod.rawValue
 
+        // Set bearer token requests that require authorization
+        if needsAuthorization {
+            guard let token = getAccessToken() else {
+                print("Authorization token missing.")
+                return nil
+            }
+            let headers = [HTTPHeader.authorization("Bearer \(token)")]
+            addHeaders(headers, to: &request)
+        }
+
         // Set post data if they exist
         if let encodedData = encodedBodyData {
             request.httpBody = encodedData
@@ -74,6 +86,11 @@ extension Endpoint {
 #endif
 
         return request
+    }
+
+    private func getAccessToken() -> String? {
+        let tokenStorage = KeychainTokenManager()
+        return tokenStorage.retrieveAccessToken()
     }
 
     func printRequestDetails(_ request: URLRequest) {

@@ -9,6 +9,8 @@ import Foundation
 
 struct LoginRequest: Endpoint {
 
+    var needsAuthorization = false
+
     let username: String
     let password: String
 
