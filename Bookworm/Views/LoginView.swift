@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @EnvironmentObject var sharedViewModel: SharedViewModel
     @StateObject private var viewModel = LoginViewModel()
 
     var body: some View {
@@ -23,24 +24,14 @@ struct LoginView: View {
             if viewModel.isLoading {
                 ProgressView()
             } else {
-                VStack {
-                    Button("Login") {
-                        Task {
-                            await viewModel.login()
-                        }
+                Button("Login") {
+                    Task {
+                        await viewModel.login()
+                        sharedViewModel.isLoggedIn = true
                     }
-                    .disabled(viewModel.isLoginButtonDisabled)
-                    .buttonStyle(.borderedProminent)
-
-                    Button("Books") {
-                        Task {
-                            await viewModel.getBooks()
-                        }
-                    }
-                    .disabled(viewModel.isLoginButtonDisabled)
-                    .buttonStyle(.borderedProminent)
                 }
-                .padding()
+                .disabled(viewModel.isLoginButtonDisabled)
+                .buttonStyle(.borderedProminent)
             }
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)

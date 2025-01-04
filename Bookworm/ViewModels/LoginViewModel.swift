@@ -19,11 +19,9 @@ class LoginViewModel: ObservableObject {
     }
 
     private let loginRepository: LoginRepository
-    private let booksRepository: BooksRepository
 
-    init(loginRepository: LoginRepository = DefaultLoginRepository(), booksRepository: BooksRepository = DefaultBooksRepository()) {
+    init(loginRepository: LoginRepository = DefaultLoginRepository()) {
         self.loginRepository = loginRepository
-        self.booksRepository = booksRepository
     }
 
     func login() async {
@@ -39,15 +37,5 @@ class LoginViewModel: ObservableObject {
         }
 
         isLoading = false
-    }
-
-    func getBooks() async {
-        do {
-            try await booksRepository.getBooks()
-        } catch let error as APIError {
-            errorMessage = error.customDescription
-        } catch {
-            errorMessage = "Unknown error occurred."
-        }
     }
 }
