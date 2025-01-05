@@ -11,6 +11,7 @@ import Foundation
 class BooksViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var groupedBooks: [Int: [Book]] = [:]
 
     private let booksRepository: BooksRepository
 
@@ -19,12 +20,23 @@ class BooksViewModel: ObservableObject {
     }
 
     func getBooks() async {
+        isLoading = true
+        defer { isLoading = false }
+
         do {
-            try await booksRepository.getBooks()
+            let books = try await booksRepository.fetchBooks()
+            groupedBooks = groupBooksByYear(books: books)
         } catch let error as APIError {
             errorMessage = error.customDescription
         } catch {
             errorMessage = "Unknown error occurred."
+        }
+    }
+
+    private func groupBooksByYear(books: [Book]) -> [Int: [Book]] {
+        let calendar = Calendar.current
+        return Dictionary(grouping: books) { book in
+            calendar.component(.year, from: book.dateReleased)
         }
     }
 }

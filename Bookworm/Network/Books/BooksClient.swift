@@ -14,12 +14,12 @@ class BooksClient: APIClient {
         self.session = URLSession(configuration: .default)
     }
 
-    func getBooks(with endpoint: BooksRequest) async throws -> BooksResponse {
+    func fetchBooks(with endpoint: BooksRequest) async throws -> BooksResponse {
         guard let request = endpoint.request else {
             throw APIError.requestFailed(description: "Unable to construct a valid request!")
         }
 
-        let response = try await fetch(with: request, decodingType: [BooksResponse.Book].self)
+        let response = try await fetch(with: request, decodingType: [Book].self)
 
         let booksResponse = BooksResponse.init(books: response)
         return booksResponse

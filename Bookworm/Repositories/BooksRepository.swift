@@ -8,7 +8,7 @@
 import Foundation
 
 protocol BooksRepository {
-    func getBooks() async throws
+    func fetchBooks() async throws -> [Book]
 }
 
 class DefaultBooksRepository: BooksRepository {
@@ -19,12 +19,12 @@ class DefaultBooksRepository: BooksRepository {
         self.tokenStorage = tokenStorage
     }
 
-    func getBooks() async throws {
+    func fetchBooks() async throws -> [Book] {
 
         let booksRequest = BooksRequest()
         let booksClient = BooksClient()
-        
-        let booksResponse = try await booksClient.getBooks(with: booksRequest)
-        print(booksResponse)
+
+            let booksResponse = try await booksClient.fetchBooks(with: booksRequest)
+            return booksResponse.books
     }
 }

@@ -60,7 +60,7 @@ struct MainTabView: View {
                     Button(action: {
                         sharedViewModel.selectedTab = 2
                     }) {
-                        Image(systemName: "house.fill")
+                        Image(systemName: "play.circle.fill")
                             .renderingMode(.template)
                             .resizable()
                             .scaledToFit()
@@ -70,7 +70,7 @@ struct MainTabView: View {
                             .shadow(color: .gray, radius: 4, x: 2, y: 2)
                             .foregroundColor(.white)
                     }
-                    .offset(y: -25)
+                    .offset(y: -10)
 
                     Spacer()
                 }

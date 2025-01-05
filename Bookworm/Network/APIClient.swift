@@ -27,7 +27,9 @@ extension APIClient {
         switch httpResponse.statusCode {
         case 200:
             do {
-                return try JSONDecoder().decode(decodingType, from: data)
+                let jsonDecoder = JSONDecoder()
+                jsonDecoder.dateDecodingStrategy = .iso8601
+                return try jsonDecoder.decode(decodingType, from: data)
             } catch {
                 throw APIError.jsonConversionFailure(description: error.localizedDescription)
             }

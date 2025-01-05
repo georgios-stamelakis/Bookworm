@@ -40,20 +40,20 @@ sample Books Response
 
 struct BooksResponse: Decodable {
     let books: [Book]
+}
 
-    struct Book: Decodable {
-        let id: Int
-        let title: String
-        let imgUrl: String
-        let dateReleased: String
-        let pdfUrl: String
+struct Book: Decodable, Identifiable {
+    let id: Int
+    let title: String
+    let imgUrl: String
+    let dateReleased: Date
+    let pdfUrl: String
 
-        private enum CodingKeys: String, CodingKey {
-            case id = "id"
-            case title = "title"
-            case imgUrl = "img_url"
-            case dateReleased = "date_released"
-            case pdfUrl = "pdf_url"
-        }
+    private enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case title = "title"
+        case imgUrl = "img_url"
+        case dateReleased = "date_released"
+        case pdfUrl = "pdf_url"
     }
 }
