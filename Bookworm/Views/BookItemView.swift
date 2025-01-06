@@ -6,16 +6,25 @@
 //
 
 import SwiftUI
+import QuickLook
 
 struct BookItemView: View {
     let book: Book
     let onImageTapped: () -> Void
 
+    @State var pdfURL: URL?
+
+
     var body: some View {
         VStack {
             ZStack {
-                Button(action: onImageTapped) {
-
+                Button(action: {
+                    if book.state == .completed {
+                        pdfURL = book.getFileURL()
+                    } else {
+                        onImageTapped()
+                    }
+                }) {
                     AsyncImage(url: URL(string: book.imgUrl)) { phase in
                         switch phase {
                         case .empty:
@@ -39,6 +48,7 @@ struct BookItemView: View {
                         }
                     }
                 }
+                .quickLookPreview($pdfURL)
 
                 if book.state == .completed {
                     TriangleBadge()

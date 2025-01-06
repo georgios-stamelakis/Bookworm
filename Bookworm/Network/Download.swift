@@ -52,21 +52,45 @@ final class Download: NSObject {
 extension Download: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
 
+        guard let httpResponse = downloadTask.response as? HTTPURLResponse else {
+            DebugLogger.log("Invalid HTTP Response")
+            continuation.yield(.canceled(data: nil))
+            continuation.finish()
+            return
+        }
+
+        let statusCode = httpResponse.statusCode
+        DebugLogger.log("Status code is : \(statusCode)")
+        guard (200...299).contains(statusCode) else {
+            DebugLogger.log("Download failed with status code: \(statusCode)")
+            continuation.yield(.canceled(data: nil))
+            continuation.finish()
+            return
+        }
+
+        guard let contentType = httpResponse.allHeaderFields["Content-Type"] as? String, contentType == "application/pdf" else {
+            DebugLogger.log("Downloaded file is not a PDF, content type: \(String(describing: httpResponse.allHeaderFields["Content-Type"]))")
+            continuation.yield(.canceled(data: nil))
+            continuation.finish()
+            return
+        }
+
+
         let fileManager = FileManager.default
         guard let fileURL = getTemporaryFileURL() else {
-            print("Failed to get temporary file URL")
+            DebugLogger.log("Failed to get temporary file URL")
             return
         }
 
         do {
             if fileManager.fileExists(atPath: fileURL.path) {
-                print("File already exists at \(fileURL.path)")
+                DebugLogger.log("File already exists at \(fileURL.path)")
                 return
             }
             try fileManager.moveItem(at: location, to: fileURL)
-            print("Successfully moved file to \(fileURL.path)")
+            DebugLogger.log("Successfully moved file to \(fileURL.path)")
         } catch {
-            print("Error moving file: \(error.localizedDescription)")
+            DebugLogger.log("Error moving file: \(error.localizedDescription)")
         }
         continuation.yield(.completed(url: fileURL))
         continuation.finish()
@@ -84,4 +108,13 @@ extension Download: URLSessionDownloadDelegate {
                 currentBytes: totalBytesWritten,
                 totalBytes: totalBytesExpectedToWrite))
     }
+
+        func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+            if let error = error {
+                DebugLogger.log("Download error: \(error.localizedDescription)")
+                continuation.yield(.canceled(data: nil))
+                continuation.finish()
+            }
+        }
 }
+

@@ -20,9 +20,7 @@ extension APIClient {
             throw APIError.requestFailed(description: "Invalid response")
         }
 
-#if DEBUG
-        print("HTTP RESPONSE CODE: \(httpResponse.statusCode)")
-#endif
+        DebugLogger.log("HTTP RESPONSE CODE: \(httpResponse.statusCode)")
 
         switch httpResponse.statusCode {
         case 200:

@@ -22,7 +22,7 @@ class KeychainHelper {
         let status = SecItemAdd(query as CFDictionary, nil)
         
         if status != errSecSuccess {
-            print("Keychain save failed with status: \(status)")
+            DebugLogger.log("Keychain save failed with status: \(status)")
         }
     }
     
@@ -40,7 +40,7 @@ class KeychainHelper {
         if status == errSecSuccess, let data = result as? Data {
             return data
         } else {
-            print("Keychain retrieve failed with status: \(status)")
+            DebugLogger.log("Keychain retrieve failed with status: \(status)")
             return nil
         }
     }
@@ -54,7 +54,7 @@ class KeychainHelper {
         let status = SecItemDelete(query as CFDictionary)
         
         if status != errSecSuccess {
-            print("Keychain delete failed with status: \(status)")
+            DebugLogger.log("Keychain delete failed with status: \(status)")
         }
     }
 }

@@ -38,7 +38,7 @@ class BooksViewModel: ObservableObject {
     private func groupBooksByYear(books: [Book]) -> [Int: [Int: Book]] {
         var result: [Int: [Int: Book]] = [:]
         for book in books {
-            var updatedBook = getBookWithDownloadState(from: book)
+            let updatedBook = getBookWithDownloadState(from: book)
             let year = book.getReleasedYear()
             result[year, default: [:] ][book.id] = updatedBook
         }
@@ -65,12 +65,12 @@ class BooksViewModel: ObservableObject {
 
     func getBookWithDownloadState(from book: Book) -> Book {
         if FileManager.default.fileExists(atPath: book.getFileURL().path) {
-            print("Book \(book.title): Is already downloaded")
+            DebugLogger.log("Book \(book.title): Is already downloaded")
             var newBook = book
             newBook.state = .completed
             return newBook
         }
-        print("Book \(book.title): Download does not exist")
+        DebugLogger.log("Book \(book.title): Download does not exist")
         return book
     }
 
@@ -100,10 +100,9 @@ private extension BooksViewModel {
         let fileManager = FileManager.default
         do {
             try fileManager.moveItem(at: url, to: destinationURL)
-            print(destinationURL)
-            print("File saved successfully at \(destinationURL.path)")
+            DebugLogger.log("File saved successfully at \(destinationURL.path)")
         } catch {
-            print("Error saving file: \(error.localizedDescription)")
+            DebugLogger.log("Error saving file: \(error.localizedDescription)")
         }
     }
 

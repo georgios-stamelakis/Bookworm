@@ -67,7 +67,7 @@ extension Endpoint {
         // Set bearer token requests that require authorization
         if needsAuthorization {
             guard let token = getAccessToken() else {
-                print("Authorization token missing.")
+                DebugLogger.log("Authorization token missing.")
                 return nil
             }
             let headers = [HTTPHeader.authorization("Bearer \(token)")]
