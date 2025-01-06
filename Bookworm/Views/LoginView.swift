@@ -13,6 +13,7 @@ struct LoginView: View {
 
     @State private var isUsernamePopupViewActive: Bool = false
     @State private var isPasswordPopupViewActive: Bool = false
+    @State private var isPasswordVisible: Bool = false
 
     @State private var tapLocation: CGPoint = .zero
 
@@ -21,6 +22,7 @@ struct LoginView: View {
             VStack {
                 Spacer()
 
+                // Username Field
                 VStack      {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
@@ -55,8 +57,7 @@ struct LoginView: View {
                     .frame(height: 60)
                     .padding(.top, 20)
 
-
-                    // Password Field with Icon
+                    // Password Field
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
                             .fill(Color.white)
@@ -68,10 +69,24 @@ struct LoginView: View {
                                 .imageScale(.large)
                                 .padding(.leading, 10)
 
-                            SecureField("Password", text: $viewModel.password)
-                                .padding(.leading, 8)
-                                .font(.system(size: 20))
-                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                            if !isPasswordVisible {
+                                SecureField("Password", text: $viewModel.password)
+                                    .padding(.leading, 8)
+                                    .font(.system(size: 20))
+                                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                            } else {
+                                TextField("Password", text: $viewModel.password)
+                                    .padding(.leading, 8)
+                                    .font(.system(size: 20))
+                                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                            }
+
+                            Button(action: {
+                                isPasswordVisible.toggle()
+                            }) {
+                                Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                                    .foregroundColor(.gray)
+                            }
 
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.gray)
