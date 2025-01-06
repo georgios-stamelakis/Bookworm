@@ -13,27 +13,91 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 16) {
-                TextField("Username", text: $viewModel.username)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
+            VStack {
+                Spacer()
 
-                SecureField("Password", text: $viewModel.password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                VStack      {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+
+                        HStack {
+                            Image(systemName: "person.fill")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                                .padding(.leading, 10)
+
+                            TextField("Username", text: $viewModel.username)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .padding(.leading, 8)
+                                .font(.system(size: 20))
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                        }
+                        .padding(16)
+                    }
+                    .frame(height: 60)
+                    .padding(.top, 20)
+
+
+                    // Password Field with Icon
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+
+                        HStack {
+                            Image(systemName: "lock.fill")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                                .padding(.leading, 10)
+
+                            SecureField("Password", text: $viewModel.password)
+                                .padding(.leading, 8)
+                                .font(.system(size: 20))
+                                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                        }
+                        .padding(16)
+                    }
+                    .frame(height: 60)
+                    .padding(.top, 20)
+
+                }
 
                 if viewModel.isLoading {
                     ProgressView()
                 } else {
-                    Button("Login") {
-                        viewModel.login()
-                        sharedViewModel.isLoggedIn = true
-                    }
-                    .disabled(viewModel.isLoginButtonDisabled)
-                    .buttonStyle(.borderedProminent)
+                        Button(action: {
+                            viewModel.login()
+                            sharedViewModel.isLoggedIn = true
+                        }) {
+                            Text("Login")
+                                .font(.system(size: 24, weight: .bold, design: .default))
+                                .foregroundColor(.white)
+
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
+                                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                                )
+                            
+                        }
+                        .disabled(viewModel.isLoginButtonDisabled)
+                        .padding(.top, 60)
+
+
+
                 }
+                Spacer()
 
             }
+            .padding(30)
+
 
             VStack {
                 ErrorView(isVisible: $viewModel.isPresentingError, message: viewModel.errorMessage)
