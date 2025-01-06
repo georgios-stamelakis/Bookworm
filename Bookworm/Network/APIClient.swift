@@ -20,8 +20,6 @@ extension APIClient {
             throw APIError.requestFailed(description: "Invalid response")
         }
 
-        DebugLogger.log("Http Response Code: \(httpResponse.statusCode)")
-
         switch httpResponse.statusCode {
         case 200:
             do {
@@ -32,8 +30,10 @@ extension APIClient {
                 throw APIError.jsonConversionFailure(description: error.localizedDescription)
             }
         case 401:
+            DebugLogger.log("Bad HTTP Response Code: \(httpResponse.statusCode)")
             throw APIError.unauthorized(description: "Authorization failed")
         default:
+            DebugLogger.log("Bad HTTP Response Code: \(httpResponse.statusCode)")
             throw APIError.responseUnsuccessful(description: "Status code: \(httpResponse.statusCode)")
         }
     }

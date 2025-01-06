@@ -111,7 +111,6 @@ private extension BooksViewModel {
         let fileManager = FileManager.default
         do {
             try fileManager.moveItem(at: url, to: destinationURL)
-            DebugLogger.log("File saved successfully at \(destinationURL.path)")
         } catch {
             DebugLogger.log("Error saving file: \(error.localizedDescription)")
         }

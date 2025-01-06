@@ -61,7 +61,6 @@ extension Download: URLSessionDownloadDelegate {
         }
 
         let statusCode = httpResponse.statusCode
-        DebugLogger.log("Status code is : \(statusCode)")
         guard (200...299).contains(statusCode) else {
             DebugLogger.log("Download failed with status code: \(statusCode)")
             continuation.yield(.failed(error: "Download failed - Server error"))
@@ -93,7 +92,6 @@ extension Download: URLSessionDownloadDelegate {
                 return
             }
             try fileManager.moveItem(at: location, to: fileURL)
-            DebugLogger.log("Successfully moved file to \(fileURL.path)")
         } catch {
             DebugLogger.log("Error moving file: \(error.localizedDescription)")
             continuation.yield(.failed(error: "Couldn't write file to disk"))
