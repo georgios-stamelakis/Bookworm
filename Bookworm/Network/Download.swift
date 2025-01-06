@@ -16,6 +16,7 @@ final class Download: NSObject {
         case progress(currentBytes: Int64, totalBytes: Int64)
         case completed(url: URL)
         case canceled(data: Data?)
+        case failed(error: String)
     }
 
     convenience init(url: URL) {
@@ -54,7 +55,7 @@ extension Download: URLSessionDownloadDelegate {
 
         guard let httpResponse = downloadTask.response as? HTTPURLResponse else {
             DebugLogger.log("Invalid HTTP Response")
-            continuation.yield(.canceled(data: nil))
+            continuation.yield(.failed(error: "Download failed"))
             continuation.finish()
             return
         }
@@ -63,6 +64,7 @@ extension Download: URLSessionDownloadDelegate {
         DebugLogger.log("Status code is : \(statusCode)")
         guard (200...299).contains(statusCode) else {
             DebugLogger.log("Download failed with status code: \(statusCode)")
+            continuation.yield(.failed(error: "Download failed - Server error"))
             continuation.yield(.canceled(data: nil))
             continuation.finish()
             return
@@ -70,15 +72,17 @@ extension Download: URLSessionDownloadDelegate {
 
         guard let contentType = httpResponse.allHeaderFields["Content-Type"] as? String, contentType == "application/pdf" else {
             DebugLogger.log("Downloaded file is not a PDF, content type: \(String(describing: httpResponse.allHeaderFields["Content-Type"]))")
+            continuation.yield(.failed(error: "Invalid file format"))
             continuation.yield(.canceled(data: nil))
             continuation.finish()
             return
         }
 
-
         let fileManager = FileManager.default
         guard let fileURL = getTemporaryFileURL() else {
             DebugLogger.log("Failed to get temporary file URL")
+            continuation.yield(.failed(error: "Download failed"))
+            continuation.yield(.canceled(data: nil))
             return
         }
 
@@ -91,6 +95,9 @@ extension Download: URLSessionDownloadDelegate {
             DebugLogger.log("Successfully moved file to \(fileURL.path)")
         } catch {
             DebugLogger.log("Error moving file: \(error.localizedDescription)")
+            continuation.yield(.failed(error: "Couldn't write file to disk"))
+            continuation.yield(.canceled(data: nil))
+            continuation.finish()
         }
         continuation.yield(.completed(url: fileURL))
         continuation.finish()
@@ -112,6 +119,7 @@ extension Download: URLSessionDownloadDelegate {
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let error = error {
                 DebugLogger.log("Download error: \(error.localizedDescription)")
+                continuation.yield(.failed(error: "Download failed"))
                 continuation.yield(.canceled(data: nil))
                 continuation.finish()
             }

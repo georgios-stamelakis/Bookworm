@@ -91,6 +91,8 @@ private extension BooksViewModel {
         case let .completed(url):
             saveFile(for: book, at: url)
             groupedBooks[book.getReleasedYear(), default: [:]][book.id]?.state = .completed
+        case let .failed(error):
+            triggerError(withDescription: error)
         case let .canceled(data):
             groupedBooks[book.getReleasedYear(), default: [:]][book.id]?.state = if let data {
                 .canceled(resumeData: data)
