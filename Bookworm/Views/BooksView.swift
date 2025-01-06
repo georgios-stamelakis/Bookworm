@@ -19,7 +19,9 @@ struct BooksView: View {
                 } else {
                     LazyVStack(alignment: .leading, spacing: 20) {
                         ForEach(viewModel.groupedBooks.keys.sorted(by: >), id: \.self) { year in
-                            GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [])
+                            GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [:]) { book in
+                                toggleDownload(for: book)
+                            }
                         }
                     }
                 }
@@ -37,9 +39,12 @@ struct BooksView: View {
     }
 }
 
+
 struct GroupedBooksSection: View {
     var year: Int
-    var books: [Book]
+    var books: [Int : Book]
+
+    let onBookTapped: (Book) -> Void
 
     var body: some View {
         Section(header: Text(String(year))
@@ -49,14 +54,26 @@ struct GroupedBooksSection: View {
         ) {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 15) {
-                    ForEach(books) { book in
-                        BookItemView(book: book)
+                    ForEach(books.keys.sorted(), id: \.self) { key in
+                        if let book = books[key] {
+                            BookItemView(book: book) {
+                                onBookTapped(book)
+                            }
                             .frame(width: 180, height: 250)
+                        }
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
             }
         }
     }
+
 }
 
+private extension BooksView {
+    func toggleDownload(for book: Book) {
+        Task {
+            try? await viewModel.download(book)
+        }
+    }
+}
