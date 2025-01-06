@@ -40,19 +40,24 @@ struct BookItemView: View {
                     }
                 }
 
-                    if book.state == .completed {
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.green)
-                            .shadow(radius: 2)
-
+                if book.state == .completed {
+                    TriangleBadge()
+                        .fill(Color.green)
+                        .frame(width: 150, height: 200)
+                        .cornerRadius(10)
+                        .overlay(alignment: .bottomTrailing) {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 16, weight: .bold))
+                                    .offset(x: -7, y: -7)
+                        }
                 }
+
             }
 
             if book.progress > 0 && !book.isDownloadCompleted {
                 ProgressView(value: book.progress)
+                    .frame(width: 150)
             }
 
             Text(book.title)
@@ -63,5 +68,16 @@ struct BookItemView: View {
 
             Spacer()
         }
+    }
+}
+
+struct TriangleBadge: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.maxX, y: rect.maxY/1.35))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX/1.5, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }
