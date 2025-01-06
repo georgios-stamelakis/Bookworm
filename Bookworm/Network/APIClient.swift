@@ -17,11 +17,13 @@ extension APIClient {
         let (data, response) = try await session.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.requestFailed(description: "Invalid response")
+            let error = APIError.requestFailed(description: "Invalid response")
+            DebugLogger.log(error.customDescription)
+            throw error
         }
 
         switch httpResponse.statusCode {
-        case 200:
+        case 200...299:
             do {
                 let jsonDecoder = JSONDecoder()
                 jsonDecoder.dateDecodingStrategy = .iso8601
@@ -30,11 +32,14 @@ extension APIClient {
                 throw APIError.jsonConversionFailure(description: error.localizedDescription)
             }
         case 401:
-            DebugLogger.log("Bad HTTP Response Code: \(httpResponse.statusCode)")
-            throw APIError.unauthorized(description: "Authorization failed")
+            let error = APIError.unauthorized(description: "Authorization failed")
+            DebugLogger.log(error.customDescription)
+            throw error
         default:
             DebugLogger.log("Bad HTTP Response Code: \(httpResponse.statusCode)")
-            throw APIError.responseUnsuccessful(description: "Status code: \(httpResponse.statusCode)")
+            let error = APIError.responseUnsuccessful(description: "Status code: \(httpResponse.statusCode)")
+            DebugLogger.log(error.customDescription)
+            throw error
         }
     }
 

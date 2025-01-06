@@ -13,6 +13,7 @@ class LoginViewModel: ObservableObject {
     @Published var username: String = ""
     @Published var password: String = ""
     @Published var isLoading: Bool = false
+    @Published var isLoggedIn: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
     @Published var isLoginButtonDisabled = true
@@ -47,8 +48,9 @@ class LoginViewModel: ObservableObject {
             defer { isLoading = false }
             do {
                 try await loginRepository.login(username: username, password: password)
+                isLoggedIn = true
             } catch let error as APIError {
-                triggerError(withDescription: error.customDescription)
+                triggerError(withDescription: error.userReadableDescription)
             } catch {
                 triggerError(withDescription: "Unknown error occurred.")
             }

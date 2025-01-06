@@ -22,4 +22,18 @@ enum APIError: Error {
         case .unauthorized(let description): return "APIError - Access Denied -> \(description)"
         }
     }
+
+    var userReadableDescription: String {
+        switch self {
+        case .requestFailed:
+            return "There was an issue with the request. Please try again."
+        case .responseUnsuccessful:
+            return "The server returned an error. Please try again later."
+        case .jsonConversionFailure:
+            return "We encountered an issue processing the data. Please try again."
+        case .unauthorized:
+            return "Wrong username or password. Please check your credentials and try again."
+        }
+    }
+
 }

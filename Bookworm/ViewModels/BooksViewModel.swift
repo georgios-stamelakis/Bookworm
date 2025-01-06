@@ -33,9 +33,9 @@ class BooksViewModel: ObservableObject {
                 let books = try await booksRepository.fetchBooks()
                 groupedBooks = groupBooksByYear(books: books)
             } catch let error as APIError {
-                errorMessage = error.customDescription
+                triggerError(withDescription: error.userReadableDescription)
             } catch {
-                errorMessage = "Unknown error occurred."
+                triggerError(withDescription: "Unknown error occurred.")
             }
         }
     }

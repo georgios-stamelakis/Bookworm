@@ -94,7 +94,6 @@ struct LoginView: View {
                 } else {
                     Button(action: {
                         viewModel.login()
-                        sharedViewModel.isLoggedIn = true
                     }) {
                         Text("Login")
                             .font(.system(size: 24, weight: .bold, design: .default))
@@ -113,8 +112,6 @@ struct LoginView: View {
                     }
                     .disabled(viewModel.isLoginButtonDisabled)
                     .padding(.top, 60)
-
-
 
                 }
                 Spacer()
@@ -142,5 +139,10 @@ struct LoginView: View {
         }
         .padding()
         .navigationTitle("Login")
+        .onChange(of: viewModel.isLoggedIn) { newIsLoggedInState in
+            if newIsLoggedInState {
+                sharedViewModel.isLoggedIn = true
+            }
+        }
     }
 }
