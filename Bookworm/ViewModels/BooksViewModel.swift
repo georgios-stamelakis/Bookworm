@@ -38,8 +38,9 @@ class BooksViewModel: ObservableObject {
     private func groupBooksByYear(books: [Book]) -> [Int: [Int: Book]] {
         var result: [Int: [Int: Book]] = [:]
         for book in books {
+            var updatedBook = getBookWithDownloadState(from: book)
             let year = book.getReleasedYear()
-            result[year, default: [:] ][book.id] = book
+            result[year, default: [:] ][book.id] = updatedBook
         }
         return result
     }
@@ -47,7 +48,7 @@ class BooksViewModel: ObservableObject {
     // MARK: Download pdf methods
     func download(_ book: Book) async throws {
         guard let bookURL = URL(string: book.pdfUrl) else { return }
-        guard downloads[bookURL] == nil, !book.isDownloadCompleted else { return }
+        guard downloads[bookURL] == nil, !book.isDownloadCompleted, book.state != .completed else { return }
 
         let download = Download(url: bookURL)
         downloads[bookURL] = download
@@ -61,6 +62,18 @@ class BooksViewModel: ObservableObject {
 
         downloads[bookURL] = nil
     }
+
+    func getBookWithDownloadState(from book: Book) -> Book {
+        if FileManager.default.fileExists(atPath: book.getFileURL().path) {
+            print("Book \(book.title): Is already downloaded")
+            var newBook = book
+            newBook.state = .completed
+            return newBook
+        }
+        print("Book \(book.title): Download does not exist")
+        return book
+    }
+
 }
 
 private extension BooksViewModel {
@@ -81,27 +94,10 @@ private extension BooksViewModel {
     }
 
     func saveFile(for book: Book, at url: URL) {
-        guard let fileURL = book.getFileURL() else { return }
         let documentsDirectory = URL.documentsDirectory
-        let directoryURL = documentsDirectory.appendingPathComponent("books")
+        let destinationURL = documentsDirectory.appendingPathComponent(book.getFileURL().lastPathComponent)
+
         let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: directoryURL.path) {
-            do {
-                try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
-                print("Created 'books' directory at \(directoryURL.path)")
-            } catch {
-                print("Error creating directory: \(error.localizedDescription)")
-                return
-            }
-        }
-
-        let destinationURL = directoryURL.appendingPathComponent(fileURL.lastPathComponent)
-
-        if fileManager.fileExists(atPath: destinationURL.path) {
-            print("File already exists at \(destinationURL.path)")
-            return
-        }
-
         do {
             try fileManager.moveItem(at: url, to: destinationURL)
             print(destinationURL)

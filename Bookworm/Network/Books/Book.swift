@@ -14,11 +14,11 @@ struct Book: Identifiable {
     let dateReleased: Date
     let pdfUrl: String
 
-    var state: State = .idle
+    var state: DownloadState = .idle
     private(set) var currentBytes: Int64 = 0
     private(set) var totalBytes: Int64 = 0
 
-    enum State: Equatable {
+    enum DownloadState: Equatable {
         case idle
         case dowloading
         case completed
@@ -38,7 +38,7 @@ struct Book: Identifiable {
         return Calendar.current.component(.year, from: dateReleased)
     }
 
-    func getFileURL() -> URL? {
+    func getFileURL() -> URL {
             URL.documentsDirectory
                 .appending(path: "\(id)")
                 .appendingPathExtension("pdf")

@@ -13,7 +13,8 @@ struct BookItemView: View {
 
     var body: some View {
         VStack {
-            Button(action: onImageTapped) {
+            ZStack {
+                Button(action: onImageTapped) {
 
                     AsyncImage(url: URL(string: book.imgUrl)) { phase in
                         switch phase {
@@ -37,9 +38,22 @@ struct BookItemView: View {
                             EmptyView()
                         }
                     }
-                
+                }
+
+                    if book.state == .completed {
+                        Image(systemName: "checkmark.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.green)
+                            .shadow(radius: 2)
+
+                }
             }
 
+            if book.progress > 0 && !book.isDownloadCompleted {
+                ProgressView(value: book.progress)
+            }
 
             Text(book.title)
                 .font(.caption)
