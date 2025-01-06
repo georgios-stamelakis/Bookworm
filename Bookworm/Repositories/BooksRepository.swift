@@ -24,7 +24,7 @@ class DefaultBooksRepository: BooksRepository {
         let booksRequest = BooksRequest()
         let booksClient = BooksClient()
 
-            let booksResponse = try await booksClient.fetchBooks(with: booksRequest)
-            return booksResponse.books
+        let booksResponse = try await booksClient.fetchBooks(with: booksRequest)
+        return booksResponse.books
     }
 }

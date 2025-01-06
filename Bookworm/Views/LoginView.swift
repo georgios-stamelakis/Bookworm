@@ -26,10 +26,8 @@ struct LoginView: View {
                     ProgressView()
                 } else {
                     Button("Login") {
-                        Task {
-                            await viewModel.login()
-                            sharedViewModel.isLoggedIn = true
-                        }
+                        viewModel.login()
+                        sharedViewModel.isLoggedIn = true
                     }
                     .disabled(viewModel.isLoginButtonDisabled)
                     .buttonStyle(.borderedProminent)

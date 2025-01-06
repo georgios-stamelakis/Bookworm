@@ -23,17 +23,20 @@ class BooksViewModel: ObservableObject {
         self.booksRepository = booksRepository
     }
 
-    func getBooks() async {
+    func getBooks() {
         isLoading = true
-        defer { isLoading = false }
 
-        do {
-            let books = try await booksRepository.fetchBooks()
-            groupedBooks = groupBooksByYear(books: books)
-        } catch let error as APIError {
-            errorMessage = error.customDescription
-        } catch {
-            errorMessage = "Unknown error occurred."
+        Task {
+            defer { isLoading = false }
+
+            do {
+                let books = try await booksRepository.fetchBooks()
+                groupedBooks = groupBooksByYear(books: books)
+            } catch let error as APIError {
+                errorMessage = error.customDescription
+            } catch {
+                errorMessage = "Unknown error occurred."
+            }
         }
     }
 
@@ -48,7 +51,7 @@ class BooksViewModel: ObservableObject {
     }
 
     // MARK: Download pdf methods
-    func download(_ book: Book) async {
+    func download(_ book: Book) {
         guard let bookURL = URL(string: book.pdfUrl) else { return }
         guard downloads[bookURL] == nil, !book.isDownloadCompleted, book.state != .completed else { return }
 
@@ -58,21 +61,20 @@ class BooksViewModel: ObservableObject {
 
         groupedBooks[book.getReleasedYear(), default: [:]][book.id]?.state = .dowloading
 
-        for await event in download.events {
-            process(event, for: book)
+        Task {
+            for await event in download.events {
+                process(event, for: book)
+            }
+            downloads[bookURL] = nil
         }
-
-        downloads[bookURL] = nil
     }
 
     func getBookWithDownloadState(from book: Book) -> Book {
         if FileManager.default.fileExists(atPath: book.getFileURL().path) {
-            DebugLogger.log("Book \(book.title): Is already downloaded")
             var newBook = book
             newBook.state = .completed
             return newBook
         }
-        DebugLogger.log("Book \(book.title): Download does not exist")
         return book
     }
 

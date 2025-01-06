@@ -83,6 +83,7 @@ extension Download: URLSessionDownloadDelegate {
             DebugLogger.log("Failed to get temporary file URL")
             continuation.yield(.failed(error: "Download failed"))
             continuation.yield(.canceled(data: nil))
+            continuation.finish()
             return
         }
 

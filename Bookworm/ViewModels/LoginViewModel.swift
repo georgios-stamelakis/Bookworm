@@ -26,17 +26,26 @@ class LoginViewModel: ObservableObject {
         self.loginRepository = loginRepository
     }
 
-    func login() async {
+    func login() {
         isLoading = true
 
-        do {
-            try await loginRepository.login(username: username, password: password)
-        } catch let error as APIError {
-            errorMessage = error.customDescription
-        } catch {
-            errorMessage = "Unknown error occurred."
+        Task {
+            defer { isLoading = false }
+
+            do {
+                try await loginRepository.login(username: username, password: password)
+            } catch let error as APIError {
+                errorMessage = error.customDescription
+            } catch {
+                errorMessage = "Unknown error occurred."
+            }
+
         }
 
-        isLoading = false
+    }
+
+    private func triggerError(withDescription errorDescription: String) {
+        errorMessage = errorDescription
+        isPresentingError = true
     }
 }

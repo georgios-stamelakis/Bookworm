@@ -29,9 +29,7 @@ struct BooksView: View {
                 }
                 .navigationTitle("Books")
                 .onAppear {
-                    Task {
-                        await viewModel.getBooks()
-                    }
+                    viewModel.getBooks()
                 }
                 .safeAreaInset(edge: .bottom) {
                     Color.clear.frame(height: 30)
@@ -84,8 +82,6 @@ struct GroupedBooksSection: View {
 
 private extension BooksView {
     func toggleDownload(for book: Book) {
-        Task {
-            await viewModel.download(book)
-        }
+        viewModel.download(book)
     }
 }
