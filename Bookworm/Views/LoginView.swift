@@ -11,6 +11,11 @@ struct LoginView: View {
     @EnvironmentObject var sharedViewModel: SharedViewModel
     @StateObject private var viewModel = LoginViewModel()
 
+    @State private var isUsernamePopupViewActive: Bool = false
+    @State private var isPasswordPopupViewActive: Bool = false
+
+    @State private var tapLocation: CGPoint = .zero
+
     var body: some View {
         ZStack {
             VStack {
@@ -34,6 +39,16 @@ struct LoginView: View {
                                 .padding(.leading, 8)
                                 .font(.system(size: 20))
                                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                                .padding(.leading, 10)
+                                .onTapGesture(coordinateSpace: .global) { location in
+                                    tapLocation = location
+                                    isUsernamePopupViewActive = true
+                                }
+
                         }
                         .padding(16)
                     }
@@ -57,6 +72,15 @@ struct LoginView: View {
                                 .padding(.leading, 8)
                                 .font(.system(size: 20))
                                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                                .padding(.leading, 10)
+                                .onTapGesture(coordinateSpace: .global) { location in
+                                    tapLocation = location
+                                    isPasswordPopupViewActive = true
+                                }
                         }
                         .padding(16)
                     }
@@ -68,27 +92,27 @@ struct LoginView: View {
                 if viewModel.isLoading {
                     ProgressView()
                 } else {
-                        Button(action: {
-                            viewModel.login()
-                            sharedViewModel.isLoggedIn = true
-                        }) {
-                            Text("Login")
-                                .font(.system(size: 24, weight: .bold, design: .default))
-                                .foregroundColor(.white)
+                    Button(action: {
+                        viewModel.login()
+                        sharedViewModel.isLoggedIn = true
+                    }) {
+                        Text("Login")
+                            .font(.system(size: 24, weight: .bold, design: .default))
+                            .foregroundColor(.white)
 
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding()
-                                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
 
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
-                                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                                )
-                            
-                        }
-                        .disabled(viewModel.isLoginButtonDisabled)
-                        .padding(.top, 60)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
+                                    .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                            )
+
+                    }
+                    .disabled(viewModel.isLoginButtonDisabled)
+                    .padding(.top, 60)
 
 
 
@@ -96,8 +120,14 @@ struct LoginView: View {
                 Spacer()
 
             }
-            .padding(30)
 
+            PopupView(isVisible: $isUsernamePopupViewActive, location: tapLocation, content: AnyView(
+                UsernameRequirementsView()
+            ))
+
+            PopupView(isVisible: $isPasswordPopupViewActive, location: tapLocation, content: AnyView(
+                PasswordRequirementsView()
+            ))
 
             VStack {
                 ErrorView(isVisible: $viewModel.isPresentingError, message: viewModel.errorMessage)
@@ -106,6 +136,8 @@ struct LoginView: View {
 
             }
             .animation(.easeInOut, value: viewModel.isPresentingError)
+            .animation(.easeInOut, value: isUsernamePopupViewActive)
+            .animation(.easeInOut, value: isPasswordPopupViewActive)
 
         }
         .padding()
