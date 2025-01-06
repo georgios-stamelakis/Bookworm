@@ -34,35 +34,10 @@ class LoginViewModel: ObservableObject {
     }
 
     func validateInputs() {
-        let isUsernameValid = validateUsername(self.username)
-        let isPasswordValid = validatePassword(self.password)
+        let isUsernameValid = CredentialValidators.validateUsername(self.username)
+        let isPasswordValid = CredentialValidators.validatePassword(self.password)
 
-        // The login button is enabled only if both username and password are valid
         self.isLoginButtonDisabled = !(isUsernameValid && isPasswordValid)
-    }
-
-    private func validateUsername(_ userID: String) -> Bool {
-        let pattern = "^[A-Z]{2}[0-9]{4}$"
-        do {
-            let regex = try NSRegularExpression(pattern: pattern)
-            let range = NSRange(location: 0, length: userID.utf16.count)
-            return regex.firstMatch(in: userID, options: [], range: range) != nil
-        } catch {
-            DebugLogger.log("Invalid regex: \(error.localizedDescription)")
-            return false
-        }
-    }
-
-    private func validatePassword(_ password: String) -> Bool {
-        let pattern = "^(?=.*[A-Z].*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])(?=.*\\d.*\\d)(?=.*[a-z].*[a-z].*[a-z])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$"
-        do {
-            let regex = try NSRegularExpression(pattern: pattern)
-            let range = NSRange(location: 0, length: password.utf16.count)
-            return regex.firstMatch(in: password, options: [], range: range) != nil
-        } catch {
-            DebugLogger.log("Invalid regex: \(error.localizedDescription)")
-            return false
-        }
     }
 
 
