@@ -12,7 +12,9 @@ class LoginViewModel: ObservableObject {
     @Published var username: String = ""
     @Published var password: String = ""
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+
+    @Published var isPresentingError: Bool = false
+    @Published var errorMessage: String = ""
 
     var isLoginButtonDisabled: Bool {
         username.isEmpty || password.isEmpty || isLoading
@@ -26,7 +28,6 @@ class LoginViewModel: ObservableObject {
 
     func login() async {
         isLoading = true
-        errorMessage = nil
 
         do {
             try await loginRepository.login(username: username, password: password)

@@ -10,7 +10,9 @@ import Foundation
 @MainActor
 class BooksViewModel: ObservableObject {
     @Published var isLoading: Bool = false
-    @Published var errorMessage: String?
+
+    @Published var isPresentingError: Bool = false
+    @Published var errorMessage: String = ""
 
     @Published var groupedBooks: [Int: [Int : Book]] = [:]
     private var downloads: [URL: Download] = [:]
@@ -46,7 +48,7 @@ class BooksViewModel: ObservableObject {
     }
 
     // MARK: Download pdf methods
-    func download(_ book: Book) async throws {
+    func download(_ book: Book) async {
         guard let bookURL = URL(string: book.pdfUrl) else { return }
         guard downloads[bookURL] == nil, !book.isDownloadCompleted, book.state != .completed else { return }
 
@@ -72,6 +74,11 @@ class BooksViewModel: ObservableObject {
         }
         DebugLogger.log("Book \(book.title): Download does not exist")
         return book
+    }
+
+    private func triggerError(withDescription errorDescription: String) {
+        errorMessage = errorDescription
+        isPresentingError = true
     }
 
 }

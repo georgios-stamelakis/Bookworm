@@ -12,29 +12,41 @@ struct BooksView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    LazyVStack(alignment: .leading, spacing: 20) {
-                        ForEach(viewModel.groupedBooks.keys.sorted(by: >), id: \.self) { year in
-                            GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [:]) { book in
-                                toggleDownload(for: book)
+            ZStack {
+                ScrollView {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        LazyVStack(alignment: .leading, spacing: 20) {
+                            ForEach(viewModel.groupedBooks.keys.sorted(by: >), id: \.self) { year in
+                                GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [:]) { book in
+                                    toggleDownload(for: book)
+                                }
                             }
                         }
                     }
                 }
-            }
-            .navigationTitle("Books")
-            .onAppear {
-                Task {
-                    await viewModel.getBooks()
+                .navigationTitle("Books")
+                .onAppear {
+                    Task {
+                        await viewModel.getBooks()
+                    }
                 }
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 30)
+                }
+
+                VStack {
+                    ErrorView(isVisible: $viewModel.isPresentingError, message: viewModel.errorMessage)
+                        .padding(.top, 10)
+                    Spacer()
+
+                }
+
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 30)
-            }
+            .animation(.easeInOut, value: viewModel.isPresentingError)
+
         }
     }
 }
@@ -73,7 +85,7 @@ struct GroupedBooksSection: View {
 private extension BooksView {
     func toggleDownload(for book: Book) {
         Task {
-            try? await viewModel.download(book)
+            await viewModel.download(book)
         }
     }
 }
