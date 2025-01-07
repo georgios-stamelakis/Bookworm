@@ -22,12 +22,19 @@ struct LoginView: View {
             VStack {
                 Spacer()
 
+                Text("Sign in to\nBookworm")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(AppColors.secondaryColor)
+                    .shadow(color: .primary.opacity(0.3), radius: 5, x: 0, y: 2)
+
                 // Username Field
                 VStack      {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
                             .fill(AppColors.mainColor)
-                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                            .shadow(color: .primary.opacity(0.3), radius: 5, x: 0, y: 2)
 
                         HStack {
                             Image(systemName: "person.fill")
@@ -35,11 +42,12 @@ struct LoginView: View {
                                 .imageScale(.large)
                                 .padding(.leading, 10)
 
-                            TextField("Username", text: $viewModel.username)
+                            TextField("", text: $viewModel.username, prompt: Text("Username").foregroundColor(.gray))
                                 .autocapitalization(.none)
                                 .disableAutocorrection(true)
                                 .padding(.leading, 8)
                                 .font(.system(size: 20))
+                                .foregroundStyle(.black)
                                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
 
                             Image(systemName: "info.circle.fill")
@@ -61,7 +69,7 @@ struct LoginView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
                             .fill(AppColors.mainColor)
-                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                            .shadow(color: .primary.opacity(0.3), radius: 5, x: 0, y: 2)
 
                         HStack {
                             Image(systemName: "lock.fill")
@@ -70,14 +78,20 @@ struct LoginView: View {
                                 .padding(.leading, 10)
 
                             if !isPasswordVisible {
-                                SecureField("Password", text: $viewModel.password)
+                                SecureField("", text: $viewModel.password, prompt: Text("Password").foregroundColor(.gray))
+                                    .autocapitalization(.none)
+                                    .disableAutocorrection(true)
                                     .padding(.leading, 8)
                                     .font(.system(size: 20))
+                                    .foregroundStyle(.black)
                                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                             } else {
-                                TextField("Password", text: $viewModel.password)
+                                TextField("", text: $viewModel.password, prompt: Text("Password").foregroundColor(.gray))
+                                    .autocapitalization(.none)
+                                    .disableAutocorrection(true)
                                     .padding(.leading, 8)
                                     .font(.system(size: 20))
+                                    .foregroundStyle(.black)
                                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
                             }
 
@@ -118,7 +132,7 @@ struct LoginView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 25)
                                 .fill(viewModel.isLoginButtonDisabled ? Color.gray : AppColors.secondaryColor)
-                                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                                .shadow(color: .primary.opacity(0.3), radius: 5, x: 0, y: 2)
                         )
 
                 }
