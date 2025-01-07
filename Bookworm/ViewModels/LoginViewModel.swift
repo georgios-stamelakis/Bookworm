@@ -43,9 +43,11 @@ class LoginViewModel: ObservableObject {
 
 
     func login() {
-        isLoading = true
+        isLoginButtonDisabled = true
         Task {
-            defer { isLoading = false }
+            defer {
+                isLoginButtonDisabled = false
+            }
             do {
                 try await loginRepository.login(username: username, password: password)
                 isLoggedIn = true

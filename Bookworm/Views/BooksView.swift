@@ -14,15 +14,10 @@ struct BooksView: View {
         NavigationStack {
             ZStack {
                 ScrollView {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else {
-                        LazyVStack(alignment: .leading, spacing: 20) {
-                            ForEach(viewModel.groupedBooks.keys.sorted(by: >), id: \.self) { year in
-                                GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [:]) { book in
-                                    toggleDownload(for: book)
-                                }
+                    LazyVStack(alignment: .leading, spacing: 20) {
+                        ForEach(viewModel.groupedBooks.keys.sorted(by: >), id: \.self) { year in
+                            GroupedBooksSection(year: year, books: viewModel.groupedBooks[year] ?? [:]) { book in
+                                toggleDownload(for: book)
                             }
                         }
                     }

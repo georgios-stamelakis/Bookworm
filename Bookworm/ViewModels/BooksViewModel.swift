@@ -9,8 +9,6 @@ import Foundation
 
 @MainActor
 class BooksViewModel: ObservableObject {
-    @Published var isLoading: Bool = false
-
     @Published var isPresentingError: Bool = false
     @Published var errorMessage: String = ""
 
@@ -24,11 +22,7 @@ class BooksViewModel: ObservableObject {
     }
 
     func getBooks() {
-        isLoading = true
-
         Task {
-            defer { isLoading = false }
-
             do {
                 let books = try await booksRepository.fetchBooks()
                 groupedBooks = groupBooksByYear(books: books)
