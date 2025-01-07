@@ -17,7 +17,7 @@ struct PopupView: View {
             GeometryReader { geometry in
                 ZStack {
                     // Background overlay
-                    Color.black.opacity(0.4)
+                    Color.secondary.opacity(0.4)
                         .ignoresSafeArea(edges: .all)
                         .onTapGesture {
                             isVisible = false
@@ -26,11 +26,10 @@ struct PopupView: View {
                     // Popup content
                     content
                         .frame(maxWidth: 200)
-                        .background(Color.white)
+                        .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(15)
                         .shadow(radius: 10)
                         .position(adjustedPosition(for: location, in: geometry))
-
                 }
             }
         }

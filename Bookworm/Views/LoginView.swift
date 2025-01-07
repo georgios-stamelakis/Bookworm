@@ -26,7 +26,7 @@ struct LoginView: View {
                 VStack      {
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
+                            .fill(AppColors.mainColor)
                             .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
 
                         HStack {
@@ -60,7 +60,7 @@ struct LoginView: View {
                     // Password Field
                     ZStack {
                         RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
+                            .fill(AppColors.mainColor)
                             .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
 
                         HStack {
@@ -120,7 +120,7 @@ struct LoginView: View {
 
                             .background(
                                 RoundedRectangle(cornerRadius: 25)
-                                    .fill(viewModel.isLoginButtonDisabled ? Color.gray : Color.blue)
+                                    .fill(viewModel.isLoginButtonDisabled ? Color.gray : AppColors.secondaryColor)
                                     .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                             )
 
@@ -132,6 +132,7 @@ struct LoginView: View {
                 Spacer()
 
             }
+            .padding()
 
             PopupView(isVisible: $isUsernamePopupViewActive, location: tapLocation, content: AnyView(
                 UsernameRequirementsView()
@@ -152,12 +153,12 @@ struct LoginView: View {
             .animation(.easeInOut, value: isPasswordPopupViewActive)
 
         }
-        .padding()
         .navigationTitle("Login")
         .onChange(of: viewModel.isLoggedIn) { newIsLoggedInState in
             if newIsLoggedInState {
                 sharedViewModel.isLoggedIn = true
             }
         }
+        .accentColor(AppColors.secondaryColor)
     }
 }

@@ -66,8 +66,8 @@ struct MainTabView: View {
                             .scaledToFit()
                             .frame(width: 60, height: 60)
                             .padding()
-                            .background(Circle().fill(Color.blue))
-                            .shadow(color: .gray, radius: 4, x: 2, y: 2)
+                            .background(Circle().fill(AppColors.secondaryColor))
+                            .shadow(color: .black, radius: 4, x: 2, y: 2)
                             .foregroundColor(.white)
                     }
                     .offset(y: -10)
@@ -76,5 +76,6 @@ struct MainTabView: View {
                 }
             }
         }
+        .accentColor(AppColors.secondaryColor)
     }
 }
